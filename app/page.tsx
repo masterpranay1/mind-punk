@@ -1,4 +1,11 @@
 import Link from "next/link";
+import {
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
 
 export default function Home() {
   return (
@@ -23,15 +30,22 @@ export default function Home() {
               Leaderboard
             </Link>
             <Link
-              href="#"
+              href="/create-quiz"
               className="hover:underline decoration-4 underline-offset-4 decoration-yellow-500"
             >
               Create
             </Link>
           </div>
-          <button className="bg-black text-white px-6 py-2 font-bold text-lg hover:bg-purple-600 transition-colors border-2 border-transparent hover:border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 active:translate-x-1 active:translate-y-1">
-            LOGIN
-          </button>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button className="bg-black text-white px-6 py-2 font-bold text-lg hover:bg-purple-600 transition-colors border-2 border-transparent hover:border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 active:translate-x-1 active:translate-y-1 cursor-pointer">
+                LOGIN
+              </button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </div>
       </nav>
 
@@ -47,12 +61,23 @@ export default function Home() {
               Create impossible quizzes. Challenge your friends. Watch them cry.
             </p>
             <div className="flex flex-col md:flex-row gap-4 pt-4 justify-center md:justify-start">
-              <button className="px-8 py-4 bg-cyan-400 border-4 border-black font-black text-xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all">
+              <button className="px-8 py-4 bg-cyan-400 border-4 border-black font-black text-xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer">
                 START PLAYING
               </button>
-              <button className="px-8 py-4 bg-white border-4 border-black font-black text-xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all">
-                CREATE QUIZ
-              </button>
+              <SignedOut>
+                <SignUpButton mode="modal" forceRedirectUrl="/create-quiz">
+                  <button className="px-8 py-4 bg-white border-4 border-black font-black text-xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer">
+                    CREATE QUIZ
+                  </button>
+                </SignUpButton>
+              </SignedOut>
+              <SignedIn>
+                <Link href="/create-quiz">
+                  <button className="px-8 py-4 bg-white border-4 border-black font-black text-xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer">
+                    CREATE QUIZ
+                  </button>
+                </Link>
+              </SignedIn>
             </div>
           </div>
 
