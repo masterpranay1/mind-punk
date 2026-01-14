@@ -185,6 +185,77 @@ export default function CreateQuizPage() {
               )}
             </div>
 
+            {/* JSON Import Section */}
+            <div className="bg-gray-100 border-4 border-black p-6 mb-8 relative">
+              <h3 className="text-xl font-black uppercase mb-4">
+                Import from JSON
+              </h3>
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <p className="font-bold mb-2 text-sm uppercase opacity-70">
+                    Upload File
+                  </p>
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+
+                      const reader = new FileReader();
+                      reader.onload = (event) => {
+                        try {
+                          const json = JSON.parse(
+                            event.target?.result as string
+                          );
+
+                          // Basic validation
+                          if (!json.title || !Array.isArray(json.questions)) {
+                            alert("INVALID JSON STRUCTURE. STUDY THE SCHEMA.");
+                            return;
+                          }
+
+                          setTitle(json.title);
+                          setSubtitle(json.subtitle || "");
+                          setQuestions(json.questions);
+                          alert("CHAOS IMPORTED SUCCESSFULLY.");
+                        } catch (err) {
+                          console.error(err);
+                          alert("FAILED TO PARSE JSON. IS IT BROKEN?");
+                        }
+                      };
+                      reader.readAsText(file);
+                    }}
+                    className="w-full border-2 border-black p-2 bg-white font-bold"
+                  />
+                  <p className="text-xs font-bold mt-2 opacity-50">
+                    *Will overwrite current form data
+                  </p>
+                </div>
+                <div>
+                  <p className="font-bold mb-2 text-sm uppercase opacity-70">
+                    Required Schema
+                  </p>
+                  <pre className="bg-black text-green-400 p-4 text-xs font-mono overflow-auto max-h-40 border-2 border-transparent">
+                    {`{
+  "title": "Quiz Title",
+  "subtitle": "Subtitle",
+  "questions": [
+    {
+      "question": "Question Text",
+      "options": [
+        { "text": "Option A", "isCorrect": true },
+        { "text": "Option B", "isCorrect": false }
+      ],
+      "answer": "Exact Answer Text"
+    }
+  ]
+}`}
+                  </pre>
+                </div>
+              </div>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <label className="font-bold text-xl uppercase">Title</label>
@@ -349,9 +420,29 @@ export default function CreateQuizPage() {
                     <p className="font-bold text-black/70 mb-4 h-12 overflow-hidden">
                       {quiz.subtitle || "No subtitle"}
                     </p>
-                    <div className="bg-white border-2 border-black p-2 text-center font-mono text-sm break-all mb-4">
-                      devotional-quiz.com/quiz/{quiz.id}
+                    <div className="bg-white border-2 border-black p-2 text-center font-mono text-sm break-all mb-4 flex justify-between items-center gap-2">
+                      <span className="truncate">
+                        {window.location.origin}/quiz/{quiz.id}
+                      </span>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            `${window.location.origin}/quiz/${quiz.id}`
+                          );
+                          alert("LINK COPIED TO CLIPBOARD");
+                        }}
+                        className="bg-black text-white px-2 py-1 text-xs font-bold hover:bg-gray-800"
+                      >
+                        COPY
+                      </button>
                     </div>
+
+                    <Link
+                      href={`/quiz/${quiz.id}`}
+                      className="block w-full mb-2 bg-purple-500 text-white border-2 border-black py-2 text-center font-bold hover:bg-purple-600 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]"
+                    >
+                      VIEW LEADERBOARD
+                    </Link>
                   </div>
 
                   <div className="flex gap-2 mt-4">
